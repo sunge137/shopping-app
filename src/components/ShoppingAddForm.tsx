@@ -145,7 +145,6 @@ export default function ItemForm({
               name="unit"
               variant="outlined"
               fullWidth
-              required
               defaultValue="ea"
               className={muiTailwindStyles}
             />

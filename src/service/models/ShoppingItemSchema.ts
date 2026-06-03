@@ -6,7 +6,7 @@ const ShoppingItemSchema = new Schema<ShoppingItem>({
   category: { type: String },
   status: { type: String, enum: Object.values(ShoppingStatus), required: true },
   quantity: { type: Number, required: true, },
-  unit: { type: String, required: true },
+  unit: { type: String },
   price: { type: Number, required: true },
   tags: { type: [String] },
 });
