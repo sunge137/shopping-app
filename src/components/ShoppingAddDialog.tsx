@@ -33,7 +33,7 @@ function ShoppingAddDialog() {
         </DialogTitle>
 
         <DialogContent className="bg-white dark:bg-zinc-800">
-          <ShoppingAddForm onSubmit={() => setOpen(false)} />
+          <ShoppingAddForm onSubmit={() => { setOpen(false); window.location.reload(); }} />
         </DialogContent>
       </Dialog>
     </>

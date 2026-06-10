@@ -10,8 +10,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { ShoppingItem, ShoppingStatus } from "@service/entities/ShoppingItem";
-import { updateShoppingItem } from "@service/shopping-service";
+import { IShoppingItemEntity, ShoppingStatus } from "@model/ShoppingItem";
+import { updateShoppingItem } from "@utilities/api";
 
 // interface Task {
 //   id: number;
@@ -28,12 +28,12 @@ import { updateShoppingItem } from "@service/shopping-service";
 function ShoppingList({
   initialList,
 }: Readonly<{
-  initialList: ShoppingItem[];
+  initialList: IShoppingItemEntity[];
 }>) {
-  const [list, setList] = useState<ShoppingItem[]>(initialList);
+  const [list, setList] = useState<IShoppingItemEntity[]>(initialList);
   //const [checked, setChecked] = useState<number[]>([]);
 
-  const handleToggle = (task: ShoppingItem, status: boolean) => () => {
+  const handleToggle = (task: IShoppingItemEntity, status: boolean) => () => {
     console.log("toggle", task.name)
     const previousItems = JSON.parse(JSON.stringify(list));
     const updatedItems = list.map(item =>

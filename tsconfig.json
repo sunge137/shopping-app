@@ -21,9 +21,11 @@
     "paths": {
       "@app/*": ["./src/app/*"],
       "@components/*": ["./src/components/*"],
-      "@hooks/*": ["./src/hooks/*"],
+      "@database/*": ["./src/database/*"],
+      "@model/*": ["./src/model/*"],
       "@providers/*": ["./src/providers/*"],
       "@redux/*": ["./src/redux/*"],
+      "@repository/*": ["./src/repository/*"],
       "@service/*": ["./src/service/*"],
       "@utilities/*": ["./src/utilities/*"],
     }

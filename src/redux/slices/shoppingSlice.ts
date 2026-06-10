@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@redux/store";
-import { ShoppingItem } from "@service/entities/ShoppingItem";
+import { IShoppingItemEntity } from "@model/ShoppingItem";
 
 // Define a type for the slice state
 export interface ShoppingState {
-  list: ShoppingItem[]
+  list: IShoppingItemEntity[]
 }
 
 // Define the initial state using that type
@@ -17,16 +17,16 @@ export const shoppingSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    addItem: (state, action: PayloadAction<ShoppingItem>) => {
+    addItem: (state, action: PayloadAction<IShoppingItemEntity>) => {
       state.list.push(action.payload);
     },
-    setList: (state, action: PayloadAction<ShoppingItem[]>) => {
+    setList: (state, action: PayloadAction<IShoppingItemEntity[]>) => {
       return {
         ...state,
         list: action.payload
       };
     },
-    updateTodo: (state, action: PayloadAction<ShoppingItem>) => {
+    updateTodo: (state, action: PayloadAction<IShoppingItemEntity>) => {
       const index = state.list.findIndex(item => item.name === action.payload.name);
       if (index !== -1) {
         state.list[index] = action.payload;

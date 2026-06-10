@@ -5,8 +5,9 @@ import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField"
-import { createShoppingItem } from "@service/shopping-service";
-import { ShoppingItem } from "@service/entities/ShoppingItem";
+import { ShoppingStatus } from "@model/ShoppingItem";
+import { createShoppingItem } from "@utilities/api";
+import Loader from "@components/Loader";
 
 // Consistent Tailwind class composition for styling both Light and Dark mode variations
 const muiTailwindStyles =
@@ -36,6 +37,7 @@ export default function ItemForm({
 }) {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" || event.key === ",") {
@@ -54,25 +56,30 @@ export default function ItemForm({
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
-  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
     const formData = new FormData(event.currentTarget);
     const data = {
       name: String(formData.get("name")),
       category: String(formData.get("category")),
+      status: ShoppingStatus.PENDING,
       quantity: Number(formData.get("quantity")),
       price: Number(formData.get("price")),
       unit: String(formData.get("unit")),
       tags: tags,
     };
-    const newShoppingItem = Object.assign(new ShoppingItem({ name: data.name }), data);
-    createShoppingItem(newShoppingItem);
+    await createShoppingItem(data);
+    setIsLoading(false);
     onSubmit(event);
   };
 
   return (
     // Outer layout wrapper matches system preferences (bg-gray-50 vs dark:bg-gray-950)
     <div className="flex justify-center items-center bg-gray-50 dark:bg-gray-800 p-4 transition-colors duration-200 rounded-lg">
+      {isLoading && (
+        <Loader />
+      )}
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-xl bg-white dark:bg-zinc-800 rounded-xl shadow-md dark:shadow-2xl p-6 flex flex-col gap-6 border dark:border-zinc-700 transition-colors duration-200"
