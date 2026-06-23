@@ -1,5 +1,5 @@
 import { TShoppingItem } from "@model/ShoppingItem";
-import { IShoppingItemRepository } from "@repository/ShoppingItemRepository";
+import { IShoppingItemRepository } from "@repository/ShoppingRepository";
 
 export class ShoppingItemService {
   private static instance: ShoppingItemService | null = null;

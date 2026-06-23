@@ -1,5 +1,5 @@
 import { IShoppingItemEntity, TShoppingItem } from "@model/ShoppingItem";
-import { MongoDBShoppingItemRepository } from "./MongoDBShoppingItemRepository";
+import { MongoDBShoppingItemRepository } from "./ShoppingRepositoryMongoose";
 
 export interface IShoppingItemRepository {
   create(data: TShoppingItem): Promise<IShoppingItemEntity>;

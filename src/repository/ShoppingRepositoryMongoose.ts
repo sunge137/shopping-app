@@ -1,6 +1,6 @@
 import { IShoppingItemEntity, ShoppingStatus, TShoppingItem } from "@model/ShoppingItem";
 import { Document, model, models, Schema } from "mongoose";
-import { IShoppingItemRepository } from "./ShoppingItemRepository";
+import { IShoppingItemRepository } from "./ShoppingRepository";
 import { dbConnect } from "./mongodb";
 
 interface IMongoDBShoppingItemDocument extends Document, TShoppingItem {

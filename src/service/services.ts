@@ -1,5 +1,5 @@
-import { ShoppingItemRepository } from "@repository/ShoppingItemRepository";
-import { ShoppingItemService } from "./ShoppingItemService";
+import { ShoppingItemRepository } from "@repository/ShoppingRepository";
+import { ShoppingItemService } from "./ShoppingService";
 
 const repositoryInstance = ShoppingItemRepository.get();
 
