@@ -1,7 +1,7 @@
 import { IShoppingItemEntity, TShoppingItem } from "@model/ShoppingItem";
-import { MongoDBShoppingItemRepository } from "./ShoppingRepositoryMongoose";
+import { MongoDBShoppingRepository } from "./ShoppingRepositoryMongoose";
 
-export interface IShoppingItemRepository {
+export interface IShoppingRepository {
   create(data: TShoppingItem): Promise<IShoppingItemEntity>;
   readAll(): Promise<IShoppingItemEntity[]>;
   readById(id: string): Promise<IShoppingItemEntity | null>;
@@ -9,23 +9,23 @@ export interface IShoppingItemRepository {
   delete(id: string): Promise<boolean>;
 }
 
-export class ShoppingItemRepository {
-  private static instance: IShoppingItemRepository | null = null;
+export class ShoppingRepository {
+  private static instance: IShoppingRepository | null = null;
 
   private constructor() { }
 
-  public static get(): IShoppingItemRepository {
-    if (ShoppingItemRepository.instance) {
-      return ShoppingItemRepository.instance;
+  public static get(): IShoppingRepository {
+    if (ShoppingRepository.instance) {
+      return ShoppingRepository.instance;
     }
     const dbType = process.env.DATABASE_TYPE;
     switch (dbType?.toLowerCase()) {
       case "mongodb":
-        ShoppingItemRepository.instance = new MongoDBShoppingItemRepository();
+        ShoppingRepository.instance = new MongoDBShoppingRepository();
         break;
       default:
         throw new Error(`Unsupported database configuration: "${dbType}"`);
     }
-    return ShoppingItemRepository.instance;
+    return ShoppingRepository.instance;
   }
 }

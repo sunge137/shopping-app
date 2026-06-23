@@ -1,8 +1,8 @@
-import { ShoppingItemRepository } from "@repository/ShoppingRepository";
-import { ShoppingItemService } from "./ShoppingService";
+import { ShoppingRepository } from "@repository/ShoppingRepository";
+import { ShoppingService } from "./ShoppingService";
 
-const repositoryInstance = ShoppingItemRepository.get();
+const repositoryInstance = ShoppingRepository.get();
 
-ShoppingItemService.init(repositoryInstance);
+ShoppingService.init(repositoryInstance);
 
-export const shoppingService = ShoppingItemService.get();
+export const shoppingService = ShoppingService.get();

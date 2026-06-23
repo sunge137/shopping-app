@@ -1,23 +1,23 @@
 import { TShoppingItem } from "@model/ShoppingItem";
-import { IShoppingItemRepository } from "@repository/ShoppingRepository";
+import { IShoppingRepository } from "@repository/ShoppingRepository";
 
-export class ShoppingItemService {
-  private static instance: ShoppingItemService | null = null;
+export class ShoppingService {
+  private static instance: ShoppingService | null = null;
 
-  private constructor(private repository: IShoppingItemRepository) { }
+  private constructor(private repository: IShoppingRepository) { }
 
-  public static init(repository: IShoppingItemRepository): ShoppingItemService {
-    if (!ShoppingItemService.instance) {
-      ShoppingItemService.instance = new ShoppingItemService(repository);
+  public static init(repository: IShoppingRepository): ShoppingService {
+    if (!ShoppingService.instance) {
+      ShoppingService.instance = new ShoppingService(repository);
     }
-    return ShoppingItemService.instance;
+    return ShoppingService.instance;
   }
 
-  public static get(): ShoppingItemService {
-    if (!ShoppingItemService.instance) {
-      throw new Error("ShoppingItemService must be initialized with a repository first.");
+  public static get(): ShoppingService {
+    if (!ShoppingService.instance) {
+      throw new Error("ShoppingService must be initialized with a repository first.");
     }
-    return ShoppingItemService.instance;
+    return ShoppingService.instance;
   }
 
   async addShoppingItem(data: TShoppingItem) {

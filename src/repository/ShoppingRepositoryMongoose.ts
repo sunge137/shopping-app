@@ -1,6 +1,6 @@
 import { IShoppingItemEntity, ShoppingStatus, TShoppingItem } from "@model/ShoppingItem";
 import { Document, model, models, Schema } from "mongoose";
-import { IShoppingItemRepository } from "./ShoppingRepository";
+import { IShoppingRepository } from "./ShoppingRepository";
 import { dbConnect } from "./mongodb";
 
 interface IMongoDBShoppingItemDocument extends Document, TShoppingItem {
@@ -26,7 +26,7 @@ const MongoDBShoppingItemSchema = new Schema<IMongoDBShoppingItemDocument>(
 
 const MongoDBShoppingItemModel = models.ShoppingItem || model<IMongoDBShoppingItemDocument>("ShoppingItem", MongoDBShoppingItemSchema);
 
-export class MongoDBShoppingItemRepository implements IShoppingItemRepository {
+export class MongoDBShoppingRepository implements IShoppingRepository {
   private mapToEntity(doc: IMongoDBShoppingItemDocument): IShoppingItemEntity {
     return {
       id: doc._id?.toString() ?? "",
