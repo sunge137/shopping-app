@@ -1,11 +1,11 @@
-import { IShoppingItemEntity, TShoppingItem } from "@model/ShoppingItem";
+import { ShoppingItem, ShoppingItemFormData } from "@model/ShoppingItem";
 import { MongoDBShoppingRepository } from "./ShoppingRepositoryMongoose";
 
 export interface IShoppingRepository {
-  create(data: TShoppingItem): Promise<IShoppingItemEntity>;
-  readAll(): Promise<IShoppingItemEntity[]>;
-  readById(id: string): Promise<IShoppingItemEntity | null>;
-  update(id: string, data: Partial<TShoppingItem>): Promise<IShoppingItemEntity | null>;
+  create(data: ShoppingItemFormData): Promise<ShoppingItem>;
+  readAll(): Promise<ShoppingItem[]>;
+  readById(id: string): Promise<ShoppingItem | null>;
+  update(id: string, data: Partial<ShoppingItemFormData>): Promise<ShoppingItem | null>;
   delete(id: string): Promise<boolean>;
 }
 

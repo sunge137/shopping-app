@@ -1,4 +1,4 @@
-import { TShoppingItem } from "@model/ShoppingItem";
+import { ShoppingItemFormData } from "@model/ShoppingItem";
 import { IShoppingRepository } from "@repository/ShoppingRepository";
 
 export class ShoppingService {
@@ -20,7 +20,7 @@ export class ShoppingService {
     return ShoppingService.instance;
   }
 
-  async addShoppingItem(data: TShoppingItem) {
+  async addShoppingItem(data: ShoppingItemFormData) {
     return await this.repository.create(data);
   }
 
@@ -36,7 +36,7 @@ export class ShoppingService {
     return item;
   }
 
-  async setShoppingItem(id: string, data: Partial<TShoppingItem>) {
+  async setShoppingItem(id: string, data: Partial<ShoppingItemFormData>) {
     return await this.repository.update(id, data);
   }
 

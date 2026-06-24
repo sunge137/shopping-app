@@ -1,4 +1,4 @@
-import { IShoppingItemEntity, TShoppingItem } from "@model/ShoppingItem";
+import { ShoppingItem } from "@model/ShoppingItem";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -6,7 +6,7 @@ if (!BASE_URL) {
   throw new Error("Missing NEXT_PUBLIC_API_URL environment variable.");
 }
 
-export async function createShoppingItem(item: TShoppingItem) {
+export async function createShoppingItem(item: Partial<ShoppingItem>) {
   try {
     const res = await fetch(`${BASE_URL}/shopping/search`, {
       method: "POST",
@@ -22,7 +22,7 @@ export async function createShoppingItem(item: TShoppingItem) {
   }
 }
 
-export async function getShoppingItems(): Promise<IShoppingItemEntity[]> {
+export async function getShoppingItems(): Promise<ShoppingItem[]> {
   const res = await fetch(`${BASE_URL}/shopping/search`, {
     method: "GET",
     headers: {
@@ -35,7 +35,7 @@ export async function getShoppingItems(): Promise<IShoppingItemEntity[]> {
   return res.json();
 }
 
-export async function updateShoppingItem(item: IShoppingItemEntity, callback?: Function) {
+export async function updateShoppingItem(item: ShoppingItem, callback?: Function) {
   const res = await fetch(`${BASE_URL}/shopping/search`, {
     method: "PUT",
     headers: {

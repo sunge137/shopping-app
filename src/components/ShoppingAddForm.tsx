@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField"
-import { ShoppingStatus } from "@model/ShoppingItem";
+import { ShoppingStatus } from "@model/ShoppingStatus";
 import { createShoppingItem } from "@utilities/api";
 import Loader from "@components/Loader";
 

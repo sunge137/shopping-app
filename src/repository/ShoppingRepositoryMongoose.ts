@@ -1,9 +1,10 @@
-import { IShoppingItemEntity, ShoppingStatus, TShoppingItem } from "@model/ShoppingItem";
+import { ShoppingItem, ShoppingItemFormData } from "@model/ShoppingItem";
+import { ShoppingStatus } from "@model/ShoppingStatus";
 import { Document, model, models, Schema } from "mongoose";
 import { IShoppingRepository } from "./ShoppingRepository";
 import { dbConnect } from "./mongodb";
 
-interface IMongoDBShoppingItemDocument extends Document, TShoppingItem {
+interface IMongoDBShoppingItemDocument extends Document, ShoppingItemFormData {
   _id: any;
   createdAt: Date;
   updatedAt: Date;
@@ -27,8 +28,8 @@ const MongoDBShoppingItemSchema = new Schema<IMongoDBShoppingItemDocument>(
 const MongoDBShoppingItemModel = models.ShoppingItem || model<IMongoDBShoppingItemDocument>("ShoppingItem", MongoDBShoppingItemSchema);
 
 export class MongoDBShoppingRepository implements IShoppingRepository {
-  private mapToEntity(doc: IMongoDBShoppingItemDocument): IShoppingItemEntity {
-    return {
+  private mapToEntity(doc: IMongoDBShoppingItemDocument): ShoppingItem {
+    return ShoppingItem.parse({
       id: doc._id?.toString() ?? "",
       name: doc.name,
       category: doc.category,
@@ -39,28 +40,28 @@ export class MongoDBShoppingRepository implements IShoppingRepository {
       tags: doc.tags,
       createdAt: doc.createdAt ? doc.createdAt.toISOString() : new Date().toISOString(),
       updatedAt: doc.updatedAt ? doc.updatedAt.toISOString() : new Date().toISOString()
-    };
+    });
   }
 
-  async create(data: TShoppingItem): Promise<IShoppingItemEntity> {
+  async create(data: ShoppingItemFormData): Promise<ShoppingItem> {
     await dbConnect();
     const item = await MongoDBShoppingItemModel.create(data);
     return this.mapToEntity(item);
   }
 
-  async readAll(): Promise<IShoppingItemEntity[]> {
+  async readAll(): Promise<ShoppingItem[]> {
     await dbConnect();
     const items = await MongoDBShoppingItemModel.find({}).exec();
     return items ? items.map(item => this.mapToEntity(item)) : [];
   }
 
-  async readById(id: string): Promise<IShoppingItemEntity | null> {
+  async readById(id: string): Promise<ShoppingItem | null> {
     await dbConnect();
     const item = await MongoDBShoppingItemModel.findById(id).exec();
     return item ? this.mapToEntity(item) : null;
   }
 
-  async update(id: string, data: Partial<TShoppingItem>): Promise<IShoppingItemEntity | null> {
+  async update(id: string, data: Partial<ShoppingItemFormData>): Promise<ShoppingItem | null> {
     await dbConnect();
     const item = await MongoDBShoppingItemModel.findByIdAndUpdate(id, data, { new: true }).exec();
     return item ? this.mapToEntity(item) : null;

@@ -5,12 +5,12 @@
 // import CardContent from "@mui/material/CardContent";
 // import CardMedia from "@mui/material/CardMedia";
 // import Typography from "@mui/material/Typography";
-import { IShoppingItemEntity } from "@model/ShoppingItem";
+import { ShoppingItem } from "@model/ShoppingItem";
 
 function ShoppingCatelog({
   items,
 }: Readonly<{
-  items: IShoppingItemEntity[];
+  items: ShoppingItem[];
 }>) {
   return (
     <div className="w-full p-6 bg-white dark:bg-zinc-950 rounded-lg shadow border border-zinc-200 dark:border-zinc-800">

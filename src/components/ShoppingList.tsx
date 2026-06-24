@@ -10,7 +10,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { IShoppingItemEntity, ShoppingStatus } from "@model/ShoppingItem";
+import { ShoppingItem } from "@model/ShoppingItem";
+import { ShoppingStatus } from "@model/ShoppingStatus";
 import { updateShoppingItem } from "@utilities/api";
 
 // interface Task {
@@ -28,19 +29,27 @@ import { updateShoppingItem } from "@utilities/api";
 function ShoppingList({
   initialList,
 }: Readonly<{
-  initialList: IShoppingItemEntity[];
+  initialList: ShoppingItem[];
 }>) {
-  const [list, setList] = useState<IShoppingItemEntity[]>(initialList);
+  const [list, setList] = useState<ShoppingItem[]>(initialList);
   //const [checked, setChecked] = useState<number[]>([]);
 
-  const handleToggle = (task: IShoppingItemEntity, status: boolean) => () => {
+  const handleToggle = (task: ShoppingItem, index: number, status: boolean) => () => {
     console.log("toggle", task.name)
-    const previousItems = JSON.parse(JSON.stringify(list));
-    const updatedItems = list.map(item =>
-      item.name === task.name ? { ...item, status: status ? ShoppingStatus.PENDING : ShoppingStatus.COMPLETED } : item
-    );
+    const previousItems = list.map(item => ShoppingItem.parse(item));
+    const newStatus = status ? ShoppingStatus.PENDING : ShoppingStatus.COMPLETED;
+    const updatedItem = ShoppingItem.parse({
+      ...ShoppingItem.json(task),
+      status: newStatus
+    });
+    const updatedItems = [...list];
+    updatedItems[index] = updatedItem;
     setList(updatedItems);
-    updateShoppingItem(Object.assign(task, { status: status ? ShoppingStatus.PENDING : ShoppingStatus.COMPLETED }), (ok: boolean) => {
+    const payload = ShoppingItem.parse({
+      ...ShoppingItem.json(task),
+      status: newStatus
+    });
+    updateShoppingItem(payload, (ok: boolean) => {
       if (!ok) {
         setList(previousItems);
       }
@@ -69,7 +78,7 @@ function ShoppingList({
               <ListItem disablePadding>
                 <ListItemButton
                   role={undefined}
-                  onClick={handleToggle(task, isChecked)}
+                  onClick={handleToggle(task, index, isChecked)}
                   dense
                   className="hover:bg-black/5 dark:hover:bg-white/5 rounded-md transition-colors"
                 >

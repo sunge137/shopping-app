@@ -1,5 +1,5 @@
 import ShoppingCatelog from "@components/ShoppingCatelog";
-import { IShoppingItemEntity } from "@model/ShoppingItem";
+import { ShoppingItem } from "@model/ShoppingItem";
 import { getShoppingItems } from "@utilities/api";
 
 export default async function ShoppingSearchPage() {
@@ -9,7 +9,7 @@ export default async function ShoppingSearchPage() {
   //   { name: "test3", category: "", price: 12.00, },
   // ]
   // let items: ShoppingItem[] = mock as ShoppingItem[];
-  let items: IShoppingItemEntity[] = await getShoppingItems();
+  let items: ShoppingItem[] = await getShoppingItems();
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
