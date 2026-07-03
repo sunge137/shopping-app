@@ -63,7 +63,7 @@ export class MongoDBShoppingRepository implements IShoppingRepository {
 
   async update(id: string, data: Partial<ShoppingItemFormData>): Promise<ShoppingItem | null> {
     await dbConnect();
-    const item = await MongoDBShoppingItemModel.findByIdAndUpdate(id, data, { new: true }).exec();
+    const item = await MongoDBShoppingItemModel.findByIdAndUpdate(id, data, { returnDocument: "after" }).exec();
     return item ? this.mapToEntity(item) : null;
   }
 

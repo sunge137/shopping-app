@@ -6,8 +6,9 @@ import Chip from "@mui/material/Chip";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField"
 import { ShoppingStatus } from "@model/ShoppingStatus";
-import { createShoppingItem } from "@utilities/api";
+import { createShoppingItem, updateShoppingItem } from "@utilities/api";
 import Loader from "@components/Loader";
+import { ShoppingItem } from "@model/ShoppingItem";
 
 // Consistent Tailwind class composition for styling both Light and Dark mode variations
 const muiTailwindStyles =
@@ -31,11 +32,15 @@ const muiTailwindStyles =
   "dark:hover:[&_.MuiChip-deleteIcon]:text-blue-400";
 
 export default function ItemForm({
+  type,
+  item,
   onSubmit
 }: {
+  type?: string;
+  item?: ShoppingItem;
   onSubmit: (event: SubmitEvent<HTMLFormElement>) => void
 }) {
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>(item?.tags || []);
   const [tagInput, setTagInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -69,7 +74,22 @@ export default function ItemForm({
       unit: String(formData.get("unit")),
       tags: tags,
     };
-    await createShoppingItem(data);
+    switch (type) {
+      case "update":
+        if (item !== null && item !== undefined) {
+          const payload = ShoppingItem.parse({
+            ...ShoppingItem.json(item),
+            ...data,
+            name: item.name,
+            status: item.status
+          });
+          await updateShoppingItem(payload);
+        }
+        break;
+      default:
+        await createShoppingItem(data);
+        break;
+    }
     setIsLoading(false);
     onSubmit(event);
   };
@@ -88,9 +108,11 @@ export default function ItemForm({
         <div className="w-full flex flex-col sm:flex-row gap-6 sm:gap-4">
           <div className="flex-1">
             <TextField
+              disabled={type == "update"}
               label="Name"
               name="name"
               variant="outlined"
+              defaultValue={item?.name || ""}
               fullWidth
               required
               className={muiTailwindStyles}
@@ -102,6 +124,7 @@ export default function ItemForm({
               label="Category"
               name="category"
               variant="outlined"
+              defaultValue={item?.category || ""}
               fullWidth
               className={muiTailwindStyles}
             />
@@ -116,6 +139,7 @@ export default function ItemForm({
               name="quantity"
               type="number"
               variant="outlined"
+              defaultValue={item?.quantity || 1}
               fullWidth
               required
               className={muiTailwindStyles}
@@ -130,6 +154,7 @@ export default function ItemForm({
               type="number"
               variant="outlined"
               fullWidth
+              defaultValue={item?.price || 0}
               required
               className={muiTailwindStyles}
               slotProps={{
@@ -152,7 +177,7 @@ export default function ItemForm({
               name="unit"
               variant="outlined"
               fullWidth
-              defaultValue="ea"
+              defaultValue={item?.unit || "ea"}
               className={muiTailwindStyles}
             />
           </div>
@@ -172,7 +197,7 @@ export default function ItemForm({
             slotProps={{
               input: {
                 startAdornment: tags.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5 max-w-[70%] mr-2 my-1">
+                  <div className="flex flex-row flex-wrap gap-1.5 w-full mr-2 my-1">
                     {tags.map((tag) => (
                       <Chip
                         key={tag}
