@@ -1,5 +1,6 @@
 import ShoppingList from "@components/ShoppingList";
 import { ShoppingItem } from "@model/ShoppingItem";
+import { ShoppingStatus } from "@model/ShoppingStatus";
 import { getShoppingItems } from "@utilities/api";
 
 export default async function ShoppingListPage() {
@@ -7,10 +8,10 @@ export default async function ShoppingListPage() {
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <div className="p-4">
+        <div className="w-full p-4">
           <h1 className="text-zinc-950 dark:text-zinc-50 text-2xl font-bold mb-4">Your Shopping List</h1>
           <p className="text-gray-600">This is where your shopping list will be displayed.</p>
-          <ShoppingList initialList={list} />
+          <ShoppingList initialList={list.filter(item => item.status == ShoppingStatus.COMPLETED || item.status == ShoppingStatus.PENDING)} />
         </div>
       </main>
     </div>

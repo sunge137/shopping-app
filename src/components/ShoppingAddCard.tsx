@@ -7,16 +7,18 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton"
-import ShoppingAddForm from "@components/ShoppingAddForm";
+import ShoppingAddForm from "@components/ShoppingItemForm";
 import { ShoppingItem } from "@model/ShoppingItem";
+
+interface ShoppingAddCardProps {
+  children: React.ReactNode;
+  item: ShoppingItem;
+}
 
 export default function ShoppingAddCard({
   children,
   item
-}: Readonly<{
-  children: React.ReactNode;
-  item: ShoppingItem;
-}>) {
+}: Readonly<ShoppingAddCardProps>) {
   const [open, setOpen] = useState(false);
 
   return (

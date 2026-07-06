@@ -9,7 +9,6 @@ import ShoppingAddDialog from "@components/ShoppingAddDialog";
 function ShoppingFooter() {
   const router = useRouter();
 
-  // Define navigation routes
   const navItems = [
     { icon: <ChecklistIcon />, path: "/shopping/list" },
     { icon: <ImageSearchIcon />, path: "/shopping/search" },

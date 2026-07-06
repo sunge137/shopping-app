@@ -31,15 +31,17 @@ const muiTailwindStyles =
   "dark:[&_.MuiChip-deleteIcon]:text-zinc-400 " +
   "dark:hover:[&_.MuiChip-deleteIcon]:text-blue-400";
 
-export default function ItemForm({
+interface ShoppingItemFormProps {
+  type?: string;
+  item?: ShoppingItem;
+  onSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
+}
+
+function ShoppingItemForm({
   type,
   item,
   onSubmit
-}: {
-  type?: string;
-  item?: ShoppingItem;
-  onSubmit: (event: SubmitEvent<HTMLFormElement>) => void
-}) {
+}: Readonly<ShoppingItemFormProps>) {
   const [tags, setTags] = useState<string[]>(item?.tags || []);
   const [tagInput, setTagInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -77,11 +79,15 @@ export default function ItemForm({
     switch (type) {
       case "update":
         if (item !== null && item !== undefined) {
+          let status = item.status;
+          if (status == ShoppingStatus.DELETED) {
+            status = ShoppingStatus.PENDING;
+          }
           const payload = ShoppingItem.parse({
             ...ShoppingItem.json(item),
             ...data,
             name: item.name,
-            status: item.status
+            status: status
           });
           await updateShoppingItem(payload);
         }
@@ -95,7 +101,6 @@ export default function ItemForm({
   };
 
   return (
-    // Outer layout wrapper matches system preferences (bg-gray-50 vs dark:bg-gray-950)
     <div className="flex justify-center items-center bg-gray-50 dark:bg-gray-800 p-4 transition-colors duration-200 rounded-lg">
       {isLoading && (
         <Loader />
@@ -104,7 +109,6 @@ export default function ItemForm({
         onSubmit={handleSubmit}
         className="w-full max-w-xl bg-white dark:bg-zinc-800 rounded-xl shadow-md dark:shadow-2xl p-6 flex flex-col gap-6 border dark:border-zinc-700 transition-colors duration-200"
       >
-        {/* Name and Category Row - Stacks vertically on mobile, row on tablet/desktop */}
         <div className="w-full flex flex-col sm:flex-row gap-6 sm:gap-4">
           <div className="flex-1">
             <TextField
@@ -118,7 +122,6 @@ export default function ItemForm({
               className={muiTailwindStyles}
             />
           </div>
-
           <div className="flex-1">
             <TextField
               label="Category"
@@ -130,8 +133,6 @@ export default function ItemForm({
             />
           </div>
         </div>
-
-        {/* Quantity, Price, and Unit Row - Stacks vertically on mobile, row on tablet/desktop */}
         <div className="w-full flex flex-col sm:flex-row gap-6 sm:gap-4">
           <div className="flex-1">
             <TextField
@@ -146,7 +147,6 @@ export default function ItemForm({
               slotProps={{ htmlInput: { min: "0", step: "any" } }}
             />
           </div>
-
           <div className="flex-1">
             <TextField
               label="Price"
@@ -169,8 +169,6 @@ export default function ItemForm({
               }}
             />
           </div>
-
-          {/* Expanded to full-width on mobile, limits to 1/4 width on desktop screens */}
           <div className="w-full sm:w-1/4 sm:min-w-[90px]">
             <TextField
               label="Unit"
@@ -182,8 +180,6 @@ export default function ItemForm({
             />
           </div>
         </div>
-
-        {/* Tags Chip Input Area */}
         <div className="w-full">
           <TextField
             label="Tags"
@@ -214,8 +210,6 @@ export default function ItemForm({
             }}
           />
         </div>
-
-        {/* Submit Button */}
         <div className="mt-2 flex justify-center w-full">
           <Button
             type="submit"
@@ -230,3 +224,5 @@ export default function ItemForm({
     </div>
   );
 }
+
+export default ShoppingItemForm;

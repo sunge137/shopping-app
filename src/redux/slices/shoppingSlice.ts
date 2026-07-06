@@ -17,23 +17,20 @@ export const shoppingSlice = createSlice({
   initialState,
   reducers: {
     addItem: (state, action: PayloadAction<ShoppingItem>) => {
-      state.list.push(action.payload);
+      state.list.push(JSON.parse(JSON.stringify(action.payload)));
     },
-    setList: (state, action: PayloadAction<ShoppingItem[]>) => {
-      return {
-        ...state,
-        list: action.payload
-      };
-    },
-    updateTodo: (state, action: PayloadAction<ShoppingItem>) => {
+    setItem: (state, action: PayloadAction<ShoppingItem>) => {
       const index = state.list.findIndex(item => item.name === action.payload.name);
       if (index !== -1) {
-        state.list[index] = action.payload;
+        state.list[index] = JSON.parse(JSON.stringify(action.payload));
       }
-    }
+    },
+    setList: (state, action: PayloadAction<ShoppingItem[]>) => {
+      state.list = action.payload.map(item => JSON.parse(JSON.stringify(item)));
+    },
   }
 });
 
-export const { addItem, setList } = shoppingSlice.actions;
+export const { addItem, setItem, setList } = shoppingSlice.actions;
 
 export default shoppingSlice.reducer;

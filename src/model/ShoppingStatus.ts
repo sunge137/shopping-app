@@ -1,4 +1,5 @@
 export enum ShoppingStatus {
   PENDING = "pending",
-  COMPLETED = "completed"
+  COMPLETED = "completed",
+  DELETED = "deleted"
 }
