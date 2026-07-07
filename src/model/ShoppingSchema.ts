@@ -14,7 +14,7 @@ export const CreateShoppingItemSchema = z.object({
 export const ShoppingItemSchema = CreateShoppingItemSchema.extend(
   z.object({
     // id: z.uuid("Invalid system ID format"),
-    id: z.string().trim().min(1, "Invalid system ID format").max(24),
+    id: z.string().trim().min(1, "Invalid system ID format").max(64),
     createdAt: z.iso.datetime("Invalid creation timestamp format"),
     updatedAt: z.iso.datetime("Invalid update timestamp format"),
   }).shape

@@ -13,7 +13,7 @@ import SwipeableListItem from "@components/SwipeableListItem";
 import { ShoppingItem, ShoppingItemData } from "@model/ShoppingItem";
 import { ShoppingStatus } from "@model/ShoppingStatus";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
-import { setList } from "@redux/slices/shoppingSlice";
+import { setItem } from "@redux/slices/shoppingSlice";
 import { updateShoppingItem } from "@utilities/api";
 
 function ShoppingList() {
@@ -21,37 +21,40 @@ function ShoppingList() {
   const { list } = useAppSelector(state => state.shopping);
   const [isEditingAll, setIsEditingAll] = useState(false);
 
-  const handleToggle = (task: ShoppingItemData, index: number, status: boolean) => () => {
-    if (isEditingAll) return;
+  const isTempItem = (id: string) => id.startsWith("temp-");
+
+  const handleToggle = async (task: ShoppingItemData, status: boolean) => {
+    if (isEditingAll || isTempItem(task.id)) return;
     const newStatus = status ? ShoppingStatus.PENDING : ShoppingStatus.COMPLETED;
     const updatedItem = ShoppingItem.json(ShoppingItem.parse({
       ...task,
       status: newStatus
     }));
-    const updatedItems = [...list];
-    updatedItems[index] = updatedItem;
-    dispatch(setList(updatedItems));
-    const payload = ShoppingItem.json(ShoppingItem.parse({
-      ...task,
-      status: newStatus
-    }));
-    updateShoppingItem(payload);
+    dispatch(setItem(updatedItem));
+
+    try {
+      const response = await updateShoppingItem(updatedItem);
+      dispatch(setItem(ShoppingItem.json(ShoppingItem.parse(response))));
+    } catch (error) {
+      dispatch(setItem(task));
+      console.error("Failed to toggle shopping item status:", error);
+    }
   };
 
-  const handleDelete = (task: ShoppingItemData, index: number) => {
+  const handleDelete = async (task: ShoppingItemData) => {
+    if (isTempItem(task.id)) return;
     const newStatus = ShoppingStatus.DELETED;
     const updatedItem = ShoppingItem.json(ShoppingItem.parse({
       ...task,
       status: newStatus
     }));
-    const updatedItems = list.filter((_, i) => i !== index);
-    updatedItems[index] = updatedItem;
-    dispatch(setList(updatedItems));
-    const payload = ShoppingItem.json(ShoppingItem.parse({
-      ...task,
-      status: newStatus
-    }));
-    updateShoppingItem(payload);
+    dispatch(setItem(updatedItem));
+    try {
+      await updateShoppingItem(updatedItem);
+    } catch (error) {
+      dispatch(setItem(task));
+      console.error("Failed to delete shopping item:", error);
+    }
   };
 
   return (
@@ -73,10 +76,10 @@ function ShoppingList() {
           return (
             <ReactFragment key={index}>
               <ListItem disablePadding>
-                <SwipeableListItem onDelete={() => handleDelete(task, index)} isGlobalEdit={isEditingAll}>
+                <SwipeableListItem onDelete={() => handleDelete(task)} isGlobalEdit={isEditingAll}>
                   <ListItemButton
                     role={undefined}
-                    onClick={handleToggle(task, index, isChecked)}
+                    onClick={() => handleToggle(task, isChecked)}
                     dense
                     disabled={isEditingAll}
                     className="hover:bg-black/5 dark:hover:bg-white/5 rounded-md transition-colors"

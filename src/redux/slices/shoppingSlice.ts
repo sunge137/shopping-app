@@ -17,10 +17,15 @@ export const shoppingSlice = createSlice({
       state.list.push(action.payload);
     },
     setItem: (state, action: PayloadAction<ShoppingItemData>) => {
-      const index = state.list.findIndex(item => item.name === action.payload.name);
+      const index = state.list.findIndex(item => item.id === action.payload.id);
       if (index !== -1) {
         state.list[index] = action.payload;
+      } else {
+        state.list.push(action.payload);
       }
+    },
+    removeItem: (state, action: PayloadAction<string>) => {
+      state.list = state.list.filter(item => item.id !== action.payload);
     },
     setList: (state, action: PayloadAction<ShoppingItemData[]>) => {
       state.list = action.payload;
@@ -28,6 +33,6 @@ export const shoppingSlice = createSlice({
   }
 });
 
-export const { addItem, setItem, setList } = shoppingSlice.actions;
+export const { addItem, removeItem, setItem, setList } = shoppingSlice.actions;
 
 export default shoppingSlice.reducer;

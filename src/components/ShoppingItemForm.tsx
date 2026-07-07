@@ -9,7 +9,7 @@ import Loader from "@components/Loader";
 import { ShoppingItem, ShoppingItemData } from "@model/ShoppingItem";
 import { ShoppingStatus } from "@model/ShoppingStatus";
 import { useAppDispatch } from "@redux/hooks";
-import { addItem, setItem } from "@redux/slices/shoppingSlice";
+import { addItem, removeItem, setItem } from "@redux/slices/shoppingSlice";
 import { createShoppingItem, updateShoppingItem } from "@utilities/api";
 
 // Consistent Tailwind class composition for styling both Light and Dark mode variations
@@ -66,9 +66,18 @@ function ShoppingItemForm({
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
+  const isPendingTempItem = item?.id?.startsWith("temp-") ?? false;
+
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
+
+    if (type === "update" && isPendingTempItem) {
+      console.warn("Cannot update item while it is still being created on the server.");
+      setIsLoading(false);
+      return;
+    }
+
     const formData = new FormData(event.currentTarget);
     const data = {
       name: String(formData.get("name")),
@@ -82,6 +91,7 @@ function ShoppingItemForm({
     switch (type) {
       case "update":
         if (item !== null && item !== undefined) {
+          const originalItem = item;
           let status = item.status;
           if (status == ShoppingStatus.DELETED) {
             status = ShoppingStatus.PENDING;
@@ -93,22 +103,33 @@ function ShoppingItemForm({
             status: status
           }));
           dispatch(setItem(payload));
-          await updateShoppingItem(payload);
+          try {
+            const response = await updateShoppingItem(payload);
+            dispatch(setItem(ShoppingItem.json(ShoppingItem.parse(response))));
+          } catch (error) {
+            dispatch(setItem(originalItem));
+            console.error("Failed to update shopping item:", error);
+          }
         }
         break;
       default:
+        const tempId = `temp-${typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : Math.random().toString(36).slice(2)}`;
         const payloadMocked = ShoppingItem.json(ShoppingItem.parse({
           ...data,
-          id: "PendingId",
+          id: tempId,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         }));
         dispatch(addItem(payloadMocked));
-        const response = await createShoppingItem(data);
-        const payload = ShoppingItem.json(ShoppingItem.parse({
-          ...response
-        }));
-        dispatch(setItem(payload));
+        try {
+          const response = await createShoppingItem(data);
+          const payload = ShoppingItem.json(ShoppingItem.parse(response));
+          dispatch(setItem(payload));
+          window.dispatchEvent(new Event("shopping:refresh"));
+        } catch (error) {
+          dispatch(removeItem(tempId));
+          console.error("Failed to create shopping item:", error);
+        }
         break;
     }
     setIsLoading(false);
