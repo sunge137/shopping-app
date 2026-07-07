@@ -54,7 +54,7 @@ function ShoppingFooter() {
             </DialogTitle>
 
             <DialogContent className="bg-white dark:bg-zinc-800">
-              <ShoppingItemForm onSubmit={() => { setOpen(false); window.location.reload(); }} />
+              <ShoppingItemForm onSubmit={() => { setOpen(false); }} />
             </DialogContent>
           </Dialog>
         </div>

@@ -8,6 +8,8 @@ import TextField from "@mui/material/TextField"
 import Loader from "@components/Loader";
 import { ShoppingItem, ShoppingItemData } from "@model/ShoppingItem";
 import { ShoppingStatus } from "@model/ShoppingStatus";
+import { useAppDispatch } from "@redux/hooks";
+import { addItem, setItem } from "@redux/slices/shoppingSlice";
 import { createShoppingItem, updateShoppingItem } from "@utilities/api";
 
 // Consistent Tailwind class composition for styling both Light and Dark mode variations
@@ -42,6 +44,7 @@ function ShoppingItemForm({
   item,
   onSubmit
 }: Readonly<ShoppingItemFormProps>) {
+  const dispatch = useAppDispatch();
   const [tags, setTags] = useState<string[]>(item?.tags || []);
   const [tagInput, setTagInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -89,11 +92,23 @@ function ShoppingItemForm({
             name: item.name,
             status: status
           }));
+          dispatch(setItem(payload));
           await updateShoppingItem(payload);
         }
         break;
       default:
-        await createShoppingItem(data);
+        const payloadMocked = ShoppingItem.json(ShoppingItem.parse({
+          ...data,
+          id: "PendingId",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }));
+        dispatch(addItem(payloadMocked));
+        const response = await createShoppingItem(data);
+        const payload = ShoppingItem.json(ShoppingItem.parse({
+          ...response
+        }));
+        dispatch(setItem(payload));
         break;
     }
     setIsLoading(false);

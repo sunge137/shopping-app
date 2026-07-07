@@ -45,7 +45,7 @@ function ShoppingCatelog() {
                 </IconButton>
               </DialogTitle>
               <DialogContent className="bg-white dark:bg-zinc-800">
-                <ShoppingItemForm type="update" item={item} onSubmit={() => { setOpenIndex(-1); window.location.reload(); }} />
+                <ShoppingItemForm type="update" item={item} onSubmit={() => { setOpenIndex(-1); }} />
               </DialogContent>
             </Dialog>
           </div>
