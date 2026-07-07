@@ -3,6 +3,8 @@ import { ShoppingStatus } from "./ShoppingStatus";
 
 export type ShoppingItemFormData = CreateShoppingItemDTO;
 
+export type ShoppingItemData = ShoppingItemDTO;
+
 export class ShoppingItem implements ShoppingItemDTO {
   public id!: string;
   public createdAt!: string;
@@ -15,7 +17,7 @@ export class ShoppingItem implements ShoppingItemDTO {
   public price!: number;
   public tags!: string[] | null;
 
-  private constructor(data: ShoppingItemDTO) {
+  private constructor(data: ShoppingItemData) {
     Object.assign(this, data);
   }
 
@@ -34,7 +36,7 @@ export class ShoppingItem implements ShoppingItemDTO {
     return safeResult.success;
   }
 
-  public static json(data: ShoppingItem): Object {
+  public static json(data: ShoppingItem): ShoppingItemData {
     return {
       id: data.id,
       createdAt: data.createdAt,

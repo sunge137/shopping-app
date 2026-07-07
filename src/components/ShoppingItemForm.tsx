@@ -5,10 +5,10 @@ import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField"
+import Loader from "@components/Loader";
+import { ShoppingItem, ShoppingItemData } from "@model/ShoppingItem";
 import { ShoppingStatus } from "@model/ShoppingStatus";
 import { createShoppingItem, updateShoppingItem } from "@utilities/api";
-import Loader from "@components/Loader";
-import { ShoppingItem } from "@model/ShoppingItem";
 
 // Consistent Tailwind class composition for styling both Light and Dark mode variations
 const muiTailwindStyles =
@@ -33,7 +33,7 @@ const muiTailwindStyles =
 
 interface ShoppingItemFormProps {
   type?: string;
-  item?: ShoppingItem;
+  item?: ShoppingItemData;
   onSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
 }
 
@@ -83,12 +83,12 @@ function ShoppingItemForm({
           if (status == ShoppingStatus.DELETED) {
             status = ShoppingStatus.PENDING;
           }
-          const payload = ShoppingItem.parse({
-            ...ShoppingItem.json(item),
+          const payload = ShoppingItem.json(ShoppingItem.parse({
+            ...item,
             ...data,
             name: item.name,
             status: status
-          });
+          }));
           await updateShoppingItem(payload);
         }
         break;

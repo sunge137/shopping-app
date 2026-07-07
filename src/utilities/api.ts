@@ -1,4 +1,6 @@
-import { ShoppingItem } from "@model/ShoppingItem";
+"use server";
+
+import { ShoppingItemData } from "@model/ShoppingItem";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -6,23 +8,21 @@ if (!BASE_URL) {
   throw new Error("Missing NEXT_PUBLIC_API_URL environment variable.");
 }
 
-export async function createShoppingItem(item: Partial<ShoppingItem>) {
-  try {
-    const res = await fetch(`${BASE_URL}/shopping/search`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(item)
-    });
-    return res.status;
-  } catch (error) {
-    console.error(error);
-    return 500;
+export async function createShoppingItem(item: Partial<ShoppingItemData>) {
+  const res = await fetch(`${BASE_URL}/shopping/search`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(item)
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch shopping items: ${res.statusText}`);
   }
+  return res.json();
 }
 
-export async function getShoppingItems(): Promise<ShoppingItem[]> {
+export async function getShoppingItems(): Promise<ShoppingItemData[]> {
   const res = await fetch(`${BASE_URL}/shopping/search`, {
     method: "GET",
     headers: {
@@ -35,7 +35,7 @@ export async function getShoppingItems(): Promise<ShoppingItem[]> {
   return res.json();
 }
 
-export async function updateShoppingItem(item: ShoppingItem, callback?: Function) {
+export async function updateShoppingItem(item: ShoppingItemData, callback?: Function) {
   const res = await fetch(`${BASE_URL}/shopping/search`, {
     method: "PUT",
     headers: {
@@ -52,7 +52,7 @@ export async function updateShoppingItem(item: ShoppingItem, callback?: Function
   return res.json();
 }
 
-// export async function deleteShoppingItem(item: ShoppingItem) {
+// export async function deleteShoppingItem(item: ShoppingItemData) {
 //   try {
 //     const res = await fetch(baseApiUrl + "/shopping/search", {
 //       method: "DELETE",

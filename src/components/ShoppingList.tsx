@@ -10,61 +10,48 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import SwipeableListItem from "@components/SwipeableListItem";
-import { ShoppingItem } from "@model/ShoppingItem";
+import { ShoppingItem, ShoppingItemData } from "@model/ShoppingItem";
 import { ShoppingStatus } from "@model/ShoppingStatus";
+import { useAppDispatch, useAppSelector } from "@redux/hooks";
+import { setList } from "@redux/slices/shoppingSlice";
 import { updateShoppingItem } from "@utilities/api";
 
-interface ShoppingListProps {
-  initialList: ShoppingItem[];
-}
-
-function ShoppingList({
-  initialList,
-}: Readonly<ShoppingListProps>) {
-  const [list, setList] = useState<ShoppingItem[]>(initialList);
+function ShoppingList() {
+  const dispatch = useAppDispatch();
+  const { list } = useAppSelector(state => state.shopping);
   const [isEditingAll, setIsEditingAll] = useState(false);
 
-  const handleToggle = (task: ShoppingItem, index: number, status: boolean) => () => {
+  const handleToggle = (task: ShoppingItemData, index: number, status: boolean) => () => {
     if (isEditingAll) return;
-    const previousItems = list.map(item => ShoppingItem.parse(item));
     const newStatus = status ? ShoppingStatus.PENDING : ShoppingStatus.COMPLETED;
-    const updatedItem = ShoppingItem.parse({
-      ...ShoppingItem.json(task),
+    const updatedItem = ShoppingItem.json(ShoppingItem.parse({
+      ...task,
       status: newStatus
-    });
+    }));
     const updatedItems = [...list];
     updatedItems[index] = updatedItem;
-    setList(updatedItems);
-    const payload = ShoppingItem.parse({
-      ...ShoppingItem.json(task),
+    dispatch(setList(updatedItems));
+    const payload = ShoppingItem.json(ShoppingItem.parse({
+      ...task,
       status: newStatus
-    });
-    updateShoppingItem(payload, (ok: boolean) => {
-      if (!ok) {
-        setList(previousItems);
-      }
-    });
+    }));
+    updateShoppingItem(payload);
   };
 
-  const handleDelete = (task: ShoppingItem, index: number) => {
-    const previousItems = list.map(item => ShoppingItem.parse(item));
+  const handleDelete = (task: ShoppingItemData, index: number) => {
     const newStatus = ShoppingStatus.DELETED;
-    const updatedItem = ShoppingItem.parse({
-      ...ShoppingItem.json(task),
+    const updatedItem = ShoppingItem.json(ShoppingItem.parse({
+      ...task,
       status: newStatus
-    });
+    }));
     const updatedItems = list.filter((_, i) => i !== index);
     updatedItems[index] = updatedItem;
-    setList(updatedItems);
-    const payload = ShoppingItem.parse({
-      ...ShoppingItem.json(task),
+    dispatch(setList(updatedItems));
+    const payload = ShoppingItem.json(ShoppingItem.parse({
+      ...task,
       status: newStatus
-    });
-    updateShoppingItem(payload, (ok: boolean) => {
-      if (!ok) {
-        setList(previousItems);
-      }
-    });
+    }));
+    updateShoppingItem(payload);
   };
 
   return (
